@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>施設情報</title>
+</head>
+<body>
+  <h1>施設情報</h1>
+  <p><strong>施設名:</strong> <span id="name">読み込み中...</span></p>
+  <p><strong>評価:</strong> <span id="rating">読み込み中...</span></p>
+
+  <h2>口コミ</h2>
+  <ul id="reviews">
+    <li>読み込み中...</li>
+  </ul>
+
+  <script>
+    // サーバーから施設データを取得して表示
+    fetch("/place-details")
+      .then(response => response.json())
+      .then(data => {
+        // 施設情報を埋め込む
+        document.getElementById("name").innerText = data.name || "不明";
+        document.getElementById("rating").innerText = data.rating || "不明";
+
+        // 口コミ情報をリストに追加
+        const reviewsList = document.getElementById("reviews");
+        reviewsList.innerHTML = ""; // 「読み込み中」を消す
+        (data.reviews || []).forEach(review => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${review.author_name}:</strong> ${review.text}`;
+          reviewsList.appendChild(li);
+        });
+      })
+      .catch(error => {
+        console.error("データ取得エラー:", error);
+        document.getElementById("name").innerText = "取得に失敗しました";
+        document.getElementById("rating").innerText = "取得に失敗しました";
+        document.getElementById("reviews").innerHTML = "<li>データを取得できませんでした。</li>";
+      });
+  </script>
+</body>
+</html>
