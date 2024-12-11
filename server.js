@@ -1,10 +1,7 @@
 // dotenv を読み込む
 require('dotenv').config();
 const express = require('express');
-
-// **httpsモジュールをインポート（これが必要！）**
 const https = require('https');
-
 const path = require('path');
 
 const app = express();
@@ -20,9 +17,6 @@ app.use(express.json());
 app.post('/search', (req, res) => {
   const { keyword, lat, lng } = req.body;
 
-  // **リクエストデータをターミナルに出力（デバッグ用）**
-  console.log(`Keyword: ${keyword}, Latitude: ${lat}, Longitude: ${lng}`);
-
   if (!keyword || !lat || !lng) {
     return res.status(400).send('必要なパラメータが不足しています。');
   }
@@ -30,17 +24,10 @@ app.post('/search', (req, res) => {
   const placesApiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=3000&keyword=${encodeURIComponent(keyword)}&language=ja&key=${GOOGLE_API_KEY}`;
 
   https.get(placesApiUrl, (placesRes) => {
-    // **Places API URL を出力**
-    console.log(`Places API URL: ${placesApiUrl}`);
-
     let placesData = '';
     placesRes.on('data', (chunk) => (placesData += chunk));
     placesRes.on('end', () => {
       const placesJson = JSON.parse(placesData);
-
-      // **Places API のレスポンスをターミナルに出力**
-      console.log(`Places API Response:`, placesJson);
-
       if (!placesJson.results || placesJson.results.length === 0) {
         return res.json([]);
       }
