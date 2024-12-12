@@ -1,13 +1,18 @@
 // dotenv を読み込む
 require('dotenv').config();
+
+// 必要なモジュールを読み込む
 const express = require('express');
 const https = require('https');
 const path = require('path');
 
+// Express アプリケーションを初期化
 const app = express();
+
+// Google APIキーを環境変数から取得
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
-// 静的ファイルを提供 (index.html を含むフォルダ)
+// 静的ファイルを提供 (public フォルダを使用)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // JSONのリクエストボディを解析
@@ -67,7 +72,58 @@ app.post('/search', (req, res) => {
   });
 });
 
+// 施設詳細エンドポイント
+app.get('/place-details', (req, res) => {
+  const placeId = req.query.place_id;
+
+  if (!placeId) {
+    return res.status(400).json({ error: 'place_id パラメータが必要です。' });
+  }
+
+  // Google Places API の URL を作成
+  const apiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_API_KEY}`;
+
+  // APIリクエスト
+  https.get(apiUrl, (apiRes) => {
+    let data = '';
+
+    // データを受信
+    apiRes.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    // データ受信完了時
+    apiRes.on('end', () => {
+      const parsedData = JSON.parse(data);
+
+      if (parsedData.result) {
+        // 必要なデータを整形
+        const placeDetails = {
+          name: parsedData.result.name,
+          address: parsedData.result.formatted_address,
+          rating: parsedData.result.rating,
+          distance: "2.3km", // 仮データ
+          reviews: parsedData.result.reviews
+            ? parsedData.result.reviews.map((review) => ({
+                author_name: review.author_name,
+                text: review.text,
+              }))
+            : [],
+        };
+
+        // JSONでレスポンス
+        res.status(200).json(placeDetails);
+      } else {
+        res.status(500).json({ error: 'データ取得に失敗しました。' });
+      }
+    });
+  }).on('error', (err) => {
+    res.status(500).json({ error: 'APIリクエストエラー: ' + err.message });
+  });
+});
+
 // サーバーを起動
-app.listen(3000, () => {
-  console.log('Server is running at http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
