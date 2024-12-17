@@ -5,12 +5,29 @@ require('dotenv').config();
 const express = require('express');
 const https = require('https');
 const path = require('path');
+const { Translate } = require('@google-cloud/translate').v2; // Google Translationライブラリ
 
 // Express アプリケーションを初期化
 const app = express();
 
-// Google APIキーを環境変数から取得
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+// Google APIキーの環境変数が正しく読み込まれているかを確認
+console.log("GOOGLE_API_KEY:", process.env.GOOGLE_API_KEY);
+console.log("GOOGLE_TRANSLATION_API_KEY:", process.env.GOOGLE_TRANSLATION_API_KEY);
+
+// Google Cloud Translation API テスト
+(async () => {
+  try {
+    const translateTest = new Translate({ key: process.env.GOOGLE_TRANSLATION_API_KEY });
+    const [translation] = await translateTest.translate("Hello, world!", "ja");
+    console.log("Translation test result:", translation); // 翻訳テスト結果を表示
+  } catch (error) {
+    console.error("Google Translation API Test Error:", error); // エラー詳細を表示
+  }
+})();
+
+// Google Cloud Translationクライアントを初期化
+const GOOGLE_TRANSLATION_API_KEY = process.env.GOOGLE_TRANSLATION_API_KEY;
+const translate = new Translate({ key: GOOGLE_TRANSLATION_API_KEY });
 
 // 静的ファイルを提供 (public フォルダを使用)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -26,7 +43,7 @@ app.post('/search', (req, res) => {
     return res.status(400).send('必要なパラメータが不足しています。');
   }
 
-  const placesApiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=3000&keyword=${encodeURIComponent(keyword)}&language=ja&key=${GOOGLE_API_KEY}`;
+  const placesApiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=3000&keyword=${encodeURIComponent(keyword)}&language=ja&key=${process.env.GOOGLE_API_KEY}`;
 
   https.get(placesApiUrl, (placesRes) => {
     let placesData = '';
@@ -39,7 +56,7 @@ app.post('/search', (req, res) => {
 
       const placesPromises = placesJson.results.map((place) => {
         return new Promise((resolve) => {
-          const directionsApiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${lat},${lng}&destination=${place.geometry.location.lat},${place.geometry.location.lng}&mode=walking&key=${GOOGLE_API_KEY}`;
+          const directionsApiUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${lat},${lng}&destination=${place.geometry.location.lat},${place.geometry.location.lng}&mode=walking&key=${process.env.GOOGLE_API_KEY}`;
           https.get(directionsApiUrl, (directionsRes) => {
             let directionsData = '';
             directionsRes.on('data', (chunk) => (directionsData += chunk));
@@ -81,7 +98,7 @@ app.get('/place-details', (req, res) => {
   }
 
   // Google Places API の URL を作成
-  const apiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_API_KEY}`;
+  const apiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.GOOGLE_API_KEY}`;
 
   // APIリクエスト
   https.get(apiUrl, (apiRes) => {
@@ -97,7 +114,6 @@ app.get('/place-details', (req, res) => {
       const parsedData = JSON.parse(data);
 
       if (parsedData.result) {
-        // 必要なデータを整形
         const placeDetails = {
           name: parsedData.result.name,
           address: parsedData.result.formatted_address,
@@ -111,7 +127,6 @@ app.get('/place-details', (req, res) => {
             : [],
         };
 
-        // JSONでレスポンス
         res.status(200).json(placeDetails);
       } else {
         res.status(500).json({ error: 'データ取得に失敗しました。' });
@@ -120,6 +135,26 @@ app.get('/place-details', (req, res) => {
   }).on('error', (err) => {
     res.status(500).json({ error: 'APIリクエストエラー: ' + err.message });
   });
+});
+
+// 翻訳エンドポイント
+app.post('/translate', async (req, res) => {
+  const { text, targetLanguage } = req.body;
+
+  if (!text || !targetLanguage) {
+    return res.status(400).send("テキストと対象言語が必要です。");
+  }
+
+  try {
+    const [translation] = await translate.translate(text, targetLanguage); // 翻訳実行
+    res.json({ translatedText: translation }); // 翻訳結果を返す
+  } catch (error) {
+    console.error("Error during translation:", error.message);
+    res.status(500).json({
+      error: "翻訳中にエラーが発生しました。",
+      details: error.message,
+    });
+  }
 });
 
 // サーバーを起動
