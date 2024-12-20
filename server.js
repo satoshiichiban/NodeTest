@@ -9,19 +9,15 @@ const { Translate } = require('@google-cloud/translate').v2; // Google Translati
 const app = express();
 app.use(express.json()); // JSON形式のリクエストを受け取る設定
 
+// 静的ファイルを提供する設定を追加
+app.use(express.static('public'));
+
 // Google Cloud Translation クライアントを初期化
 const GOOGLE_TRANSLATION_API_KEY = process.env.GOOGLE_TRANSLATION_API_KEY;
 
-
 // APIキーが正しく読み込まれているかを確認
 console.log("GOOGLE_TRANSLATION_API_KEY:", GOOGLE_TRANSLATION_API_KEY);
-const translate = new Translate({ key: GOOGLE_TRANSLATION_API_KEY })
-
-
-// デフォルトルート（"/"）
-app.get('/', (req, res) => {
-  res.send("Welcome to the Translation API! 🚀");
-});
+const translate = new Translate({ key: GOOGLE_TRANSLATION_API_KEY });
 
 // 翻訳エンドポイント
 app.post('/translate', async (req, res) => {
@@ -38,6 +34,11 @@ app.post('/translate', async (req, res) => {
     console.error("Error during translation:", error.message);
     res.status(500).json({ error: "翻訳中にエラーが発生しました。" });
   }
+});
+
+// デフォルトルート（"/"）
+app.get('/', (req, res) => {
+  res.send("Welcome to the Translation API! 🚀");
 });
 
 // サーバー起動

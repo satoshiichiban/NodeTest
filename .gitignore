@@ -4,5 +4,6 @@ node_modules/
 # 環境変数ファイル
 .env
 
-# macOS の不要なメタデータ
-.DS_Store
+# # その他の不要ファイル
+.DS_Store　# macOSの隠しファイル
+*.log     # ログファイル
