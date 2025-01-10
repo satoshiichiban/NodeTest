@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>施設検索ツール</title>
@@ -64,15 +68,25 @@
   <div class="container">
     <h1>施設検索ツール</h1>
     <div class="search-bar">
+<<<<<<< HEAD
       <input type="text" id="keyword" placeholder="検索キーワードを入力" autocomplete="off">
       <button onclick="search()">検索</button>
       <button onclick="clearResults()">クリア</button>
     </div>    
+=======
+      <input type="text" id="keyword" placeholder="検索キーワードを入力">
+      <button onclick="search()">検索</button>
+      <button onclick="clearResults()">クリア</button>
+    </div>
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
     <div id="results" class="results"></div>
   </div>
 
   <script>
+<<<<<<< HEAD
     // 検索ボタンを押した際の処理
+=======
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
     function search() {
       if (!navigator.geolocation) {
         alert('お使いのブラウザでは位置情報がサポートされていません');
@@ -90,7 +104,10 @@
             return;
           }
 
+<<<<<<< HEAD
           // サーバーにリクエストを送信
+=======
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
           fetch('/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -106,13 +123,19 @@
       );
     }
 
+<<<<<<< HEAD
     // 検索結果をクリア
+=======
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
     function clearResults() {
       document.getElementById("results").innerHTML = "";
       document.getElementById("keyword").value = "";
     }
 
+<<<<<<< HEAD
     // 検索結果を表示
+=======
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
     function displayResults(data) {
       const resultsDiv = document.getElementById("results");
       resultsDiv.innerHTML = "";
@@ -125,6 +148,7 @@
       data.forEach((place) => {
         const card = document.createElement("div");
         card.className = "card";
+<<<<<<< HEAD
 
         // 距離情報のハンドリング
         const distanceInfo = place.distanceText === "不明" || place.distanceText === "取得エラー"
@@ -136,6 +160,12 @@
           <h3>${place.name}</h3>
           <p>住所: ${place.address}</p>
           <p>距離: ${distanceInfo}</p>
+=======
+        card.innerHTML = `
+          <h3>${place.name}</h3>
+          <p>住所: ${place.address}</p>
+          <p>距離: ${place.distanceText}</p>
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
           <p>評価: ${place.rating}</p>
           <p>口コミ数: ${place.userRatingsTotal}</p>
           <a href="${place.mapLink}" target="_blank">Googleマップで見る</a>
@@ -144,5 +174,78 @@
       });
     }
   </script>
+<<<<<<< HEAD
+=======
+=======
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>施設詳細</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .reviews ul {
+            list-style: none;
+            padding: 0;
+        }
+        .reviews li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>施設詳細</h1>
+    <div id="container"></div>
+
+    <script>
+        // テスト用のplace_id (必要に応じて変更してください)
+        const placeId = 'ChIJN1t_tDeuEmsRUsoyG83frY4';
+
+        // 施設詳細を取得する
+        fetch(`/place-details?place_id=${placeId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                // 施設情報を表示
+                card.innerHTML = `
+                    <h3>${data.name}</h3>
+                    <p>住所: ${data.address}</p>
+                    <p>評価: ${data.rating}</p>
+                    <p>距離: ${data.distance}</p>
+                    <div class="reviews">
+                        <h4>口コミ:</h4>
+                        <ul>
+                            ${data.reviews
+                                .map(
+                                    (review) =>
+                                        `<li><strong>${review.author_name}:</strong> ${
+                                            review.text.length > 30
+                                                ? review.text.slice(0, 30) + "..."
+                                                : review.text
+                                        } <button>もっと見る</button></li>`
+                                )
+                                .join("")}
+                        </ul>
+                    </div>
+                `;
+
+                // カードをページに追加
+                document.getElementById("container").appendChild(card);
+            })
+            .catch((error) => {
+                console.error("データ取得エラー:", error);
+            });
+    </script>
+>>>>>>> 6fbfc98 (5回目のコミットV3.1【口コミ5件表示・但し英語表記】)
+>>>>>>> df3a4919511eb43128226362f10fb2be788380b2
 </body>
 </html>
