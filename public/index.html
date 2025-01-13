@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>施設検索ツール</title>
@@ -68,25 +64,17 @@
   <div class="container">
     <h1>施設検索ツール</h1>
     <div class="search-bar">
-<<<<<<< HEAD
       <input type="text" id="keyword" placeholder="検索キーワードを入力" autocomplete="off">
       <button onclick="search()">検索</button>
       <button onclick="clearResults()">クリア</button>
-    </div>    
-=======
-      <input type="text" id="keyword" placeholder="検索キーワードを入力">
-      <button onclick="search()">検索</button>
-      <button onclick="clearResults()">クリア</button>
     </div>
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
     <div id="results" class="results"></div>
   </div>
-
+  
   <script>
-<<<<<<< HEAD
+
     // 検索ボタンを押した際の処理
-=======
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
+
     function search() {
       if (!navigator.geolocation) {
         alert('お使いのブラウザでは位置情報がサポートされていません');
@@ -104,10 +92,8 @@
             return;
           }
 
-<<<<<<< HEAD
           // サーバーにリクエストを送信
-=======
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
+
           fetch('/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -123,19 +109,15 @@
       );
     }
 
-<<<<<<< HEAD
     // 検索結果をクリア
-=======
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
+
     function clearResults() {
       document.getElementById("results").innerHTML = "";
       document.getElementById("keyword").value = "";
     }
 
-<<<<<<< HEAD
     // 検索結果を表示
-=======
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
+
     function displayResults(data) {
       const resultsDiv = document.getElementById("results");
       resultsDiv.innerHTML = "";
@@ -148,7 +130,6 @@
       data.forEach((place) => {
         const card = document.createElement("div");
         card.className = "card";
-<<<<<<< HEAD
 
         // 距離情報のハンドリング
         const distanceInfo = place.distanceText === "不明" || place.distanceText === "取得エラー"
@@ -159,27 +140,18 @@
         card.innerHTML = `
           <h3>${place.name}</h3>
           <p>住所: ${place.address}</p>
-          <p>距離: ${distanceInfo}</p>
-=======
-        card.innerHTML = `
-          <h3>${place.name}</h3>
-          <p>住所: ${place.address}</p>
           <p>距離: ${place.distanceText}</p>
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
           <p>評価: ${place.rating}</p>
           <p>口コミ数: ${place.userRatingsTotal}</p>
-          <a href="${place.mapLink}" target="_blank">Googleマップで見る</a>
+          <a href="${place.mapLink}" target="blank">Googleマップで見る</a>
         `;
         resultsDiv.appendChild(card);
       });
     }
   </script>
-<<<<<<< HEAD
-=======
-=======
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>施設詳細</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -201,7 +173,6 @@
     </style>
 </head>
 <body>
-    <h1>施設詳細</h1>
     <div id="container"></div>
 
     <script>
@@ -245,7 +216,5 @@
                 console.error("データ取得エラー:", error);
             });
     </script>
->>>>>>> 6fbfc98 (5回目のコミットV3.1【口コミ5件表示・但し英語表記】)
->>>>>>> df3a4919511eb43128226362f10fb2be788380b2
 </body>
 </html>
