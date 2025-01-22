@@ -1,11 +1,12 @@
-
-# NodeTest Project
-
 ## プロジェクト概要
 <br>
+場所検索の為の、3kmと5kmの距離スイッチ機能を追加しました。
+コードの構造とロジックを改善しました。
+
 Node.js・Expressを使用して施設検索ツールを作成したプロジェクトです。
-<br><br><br>
-4つのAPIを活用し、ユーザーが特定のキーワードや条件で施設を検索できる機能を提供します。 <br>
+<br><br>
+4つのAPIを活用し、ユーザーが特定のキーワードや条件で施設を検索できる機能を提供します。
+<br>
 Maps JavaScript API<br>
 Geolocation API<br>
 Directions API<br>
